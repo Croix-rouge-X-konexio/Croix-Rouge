@@ -116,7 +116,7 @@ const EventsSchema = new mongoose.Schema({
     }],
 });
 
-const EventEducatoinRelatedSchema = new mongoose.Schema({
+const EventEducationRelatedSchema = new mongoose.Schema({
     EventId: [{
         type: mongoose.Types.ObjectId,
         ref: "Event", // à vérif
@@ -149,7 +149,7 @@ const User = mongoose.model("User", UsersSchema);
 const UserExperience = mongoose.model("UserExperience", UsersExperienceSchema);
 const UserEducation = mongoose.model("UserEducation", UsersEducationSchema);
 const Event = mongoose.model("Event", EventsSchema);
-const EventEducatoinRelated = mongoose.model("EventEducatoinRelated", EventEducatoinRelatedSchema);
+const EventEducationRelated = mongoose.model("EventEducationRelated", EventEducationRelatedSchema);
 const EducationList = mongoose.model("EducationList", EducationListSchema);
 const EventAttendees = mongoose.model("EventAttendees", EventAttendeesSchema);
 
@@ -158,7 +158,7 @@ module.exports = {
     UserExperience,
     UserEducation,
     Event,
-    EventEducatoinRelated,
+    EventEducationRelated,
     EducationList,
     EventAttendees,
 };

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const Middleware = require("./middleware/middleware");
 
 // Shema
 const Schema = require("./Schema");
@@ -54,9 +55,8 @@ app.post("/user", async (req, res) => {
             EducationId: educationExist.id,
             // certificate
         });
-        console.log()
         await Schema.UserExperience.create({
-            title: User.title,
+            title: User.titleExperience,
             startingDate: User.startingDate,
             endingDate: User.endingDate,
             userId: newUser.id,
@@ -73,12 +73,37 @@ app.post("/user", async (req, res) => {
     }
 });
 
+
+app.post("/event", middleware.protect, async (req, res) => {
+    const Event = req.body;
+    try {
+        const newEvent = await Schema.Event.create({
+            title: Event.title,
+            date: Event.date,
+            heure: Event.heure,
+            duration: Event.duration,
+            place: Event.place,
+            description: Event.description,
+            userId: 1
+        });
+        await Schema.EventEducationRelated.create({
+            EventId: newEvent.id,
+            EducationId: newEvent.education
+        });
+    }
+    catch (err) {
+        return res.json({
+            message: "error",
+        });
+    }
+});
+
 // LISTEN
 app.listen(process.env.PORT, () => {
     console.log("Server listening on port: " + process.env.PORT);
 });
 
-// exemple postman
+// exemple new user
 // {
 //     "firstName": "User.firstName",  
 //     "lastName": "User.lastName",
