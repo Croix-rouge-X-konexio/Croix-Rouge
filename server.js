@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const Middleware = require("./middleware/middleware");
+const Protect = require("./middleware/protect");
 
 // Shema
 const Schema = require("./Schema");
@@ -67,6 +67,7 @@ app.post("/user", async (req, res) => {
         });
     }
     catch (err) {
+        console.log(err);
         return res.json({
             message: "error",
         });
@@ -74,8 +75,9 @@ app.post("/user", async (req, res) => {
 });
 
 
-app.post("/event", middleware.protect, async (req, res) => {
+app.post("/event", Protect.protect, async (req, res) => {
     const Event = req.body;
+    console.log(req.cookies.jwtData.id);
     try {
         const newEvent = await Schema.Event.create({
             title: Event.title,
@@ -84,19 +86,69 @@ app.post("/event", middleware.protect, async (req, res) => {
             duration: Event.duration,
             place: Event.place,
             description: Event.description,
-            userId: 1
+            userId: req.cookies.jwtData.id
         });
         await Schema.EventEducationRelated.create({
             EventId: newEvent.id,
-            EducationId: newEvent.education
+            EducationId: Event.educationId
+        });
+        res.status(201).json({
+            message: `New Event added ${Event.title}`,
+            data: Event
         });
     }
     catch (err) {
+        console.log(err);
         return res.json({
             message: "error",
         });
     }
 });
+
+/////// Connection utilisateur
+app.post("/login", async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const userExist = await Schema.User.findOne({ email }); //Chercher l'utilisateur dans la BD
+    console.log(userExist);
+
+    if (!userExist) {
+        return res.json({
+            message: "Invalid email or password",
+        });
+    }
+
+    const passwordValid = await bcrypt.compare(password, userExist.password) //Verification du MDP
+    if (!passwordValid) {
+        return res.json({
+            message: "Invalid email or password",
+        });
+    }
+
+    const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET); //Creation du token
+
+    res.cookie("jwt", token, { httpOnly: true, secure: false }); //creation du cookie
+    res.json("You are connected");
+});
+
+
+// app.get("/allUser", (req, res) => {
+
+// });
+
+// app.get("/allEvent", async (req, res) => {
+//     const Events = await Schema.Event.find({ userId: req.cookies.jwtData._id });
+//     res.status(200).json({
+//         message: "Event list",
+//         data: Events,
+//     });
+// });
+
+// app.get("/disconnect", async (_req, res) => {
+//     res.clearCookie("jwt", "", { path: "/dsiconnect" })
+//         .status(200)
+//         .json({ message: "Offline" });
+// });
 
 // LISTEN
 app.listen(process.env.PORT, () => {
@@ -117,4 +169,9 @@ app.listen(process.env.PORT, () => {
 //     "startingDate": 54654,
 //     "endingDat": 656,
 //     "education": "ambulancier"
+// mot de passe : Victor
 // }
+
+// userId: 615c4cec100ff385f853033d
+
+// , middleware.protect

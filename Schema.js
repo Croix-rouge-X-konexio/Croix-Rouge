@@ -119,11 +119,11 @@ const EventsSchema = new mongoose.Schema({
 const EventEducationRelatedSchema = new mongoose.Schema({
     EventId: [{
         type: mongoose.Types.ObjectId,
-        ref: "Event", // à vérif
+        ref: "Events", // à vérif
     }],
     EducationId: [{
         type: mongoose.Types.ObjectId,
-        ref: "EducationList",
+        ref: "EducationLists",
     }],
 });
 

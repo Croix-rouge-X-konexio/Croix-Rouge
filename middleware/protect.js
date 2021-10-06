@@ -7,22 +7,24 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
 function protect(req, res, next) {
+    console.log(req)
     try {
         const dataUser = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
-        if (dataUser.iat + 1000 < Math.ceil(Date.now() / 1000)) {
+        if (dataUser.iat + 100000 < Math.ceil(Date.now() / 1000)) {
             return res.clearCookie('jwt').json({
                 message: "Session expired"
             })
         } else {
-            req.cookies.jwtData = dataUser;
+            req.cookies.jwtData = { id: dataUser.id, email: dataUser.email };
             next();
         }
     } catch (err) {
+        console.log(err);
         return res.status(401).json({
             message: "TOKEN not Valid"
         })
     }
 }
-// TEST datauser 
+// TEST datauser récupère id  email password
 
 module.exports = { protect: protect };
