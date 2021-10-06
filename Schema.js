@@ -39,7 +39,7 @@ const UsersSchema = new mongoose.Schema({
     },
     isValidate: {
         required: true,
-        type: Boolean
+        type: Boolean,
     }
 });
 
