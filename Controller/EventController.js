@@ -13,13 +13,10 @@ const Schema = require("../Schema");
 
 //  PAGE EVENT //
 
-//  MODIFIER EVENT
-//  SUPPRIMER EVENT
-//  CREER EVENT
-//  CONSULTER EVENT
-
-// .delete et .patch à faire
-
+//  MODIFIER EVENT - a faire si temps
+//  SUPPRIMER EVENT - OK
+//  CREER EVENT - OK
+//  CONSULTER EVENT - OK
 
 const getAllEvent = async (_req, res) => {
     const Events = await Schema.Event.find(/* { date: { $lte: date du jour} } */);
@@ -71,17 +68,67 @@ const addEvent = async (req, res) => {
     }
 };
 
-// const deleteEvent = (Protect.protect, isAdmin.isAdmin, async (req, res) => {
+const deleteEvent = async (req, res) => {
 
-// });
+    try {
+        const eventId = req.params.eventId;
+        const Event = await Schema.Event.deleteOne({ _id: eventId });
+        const EventAttendees = await Schema.EventAttendees.deleteMany({ EventId: eventId });
+        const EventEducationRelated = await Schema.EventEducationRelated.deleteMany({ EventId: eventId });
 
-// const patchEvent = (Protect.protect, isAdmin.isAdmin, async (req, res) => {
+        res.json({
+            message: `${eventId} deleted`,
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error: Event not found",
+        });
+    }
 
-// });
+
+
+};
+
+/* const patchEvent = async (req, res) => { //////// A corriger et ajouter si on a du temps
+    try {
+        const EventUpdate = req.body;
+        await Schema.Event.findOneAndUpdate(
+            { _id: req.body.id },
+            {
+            title: EventUpdate.title,
+            date: EventUpdate.date,
+            heure: EventUpdate.heure,
+            duration: EventUpdate.duration,
+            place: EventUpdate.place,
+            description: EventUpdate.description,
+            userId: req.cookies.jwtData.id,
+            }
+        );
+        await Schema.EventEducationRelated.findOneAndUpdate(
+            { _id: req.body.id },
+            {
+            EventId: newEvent.id,
+            EducationId: EventUpdate.educationId
+            }
+        );
+
+        res.json({
+            message: "Update status: changed recorded",
+        })
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error: Event not found",
+        });
+    }
+}; */
 
 module.exports = {
     getAllEvent: getAllEvent,
     addEvent: addEvent,
-    // deleteEvent: deleteEvent,
+    deleteEvent: deleteEvent,
     // patchEvent: patchEvent,
 };

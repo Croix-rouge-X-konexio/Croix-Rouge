@@ -11,13 +11,10 @@ const Schema = require("../Schema");
 
 // PAGE HOME //
 
-// SE CONNECTER
-// S'INSCRIRE
-// MODIFIER SON PROFIL
-// SE DECONNECTER
-
-// .patch à faire
-
+// SE CONNECTER - OK
+// S'INSCRIRE - OK
+// MODIFIER SON PROFIL - A faire
+// SE DECONNECTER - OK
 
 const logIn = async (req, res) => {
     const email = req.body.email;

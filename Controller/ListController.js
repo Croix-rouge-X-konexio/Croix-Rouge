@@ -3,10 +3,9 @@ const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const Schema = require("../Schema")
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const Protect = require("./middleware/protect");
-const isAdmin = require("./middleware/isAdmin");
 const router = express.Router();
 
 
@@ -17,53 +16,101 @@ const router = express.Router();
 //  MODIFIER UN USER
 //  SUPPRIMER UN USER
 
-// .delete et .patch à faire
-
 const getAllUsers = async (_req, res) => {
-    const userInfo = await Schema.User.find();
-    const listUser = [];
+    try {
+        const userInfo = await Schema.User.find();
+        const listUser = [];
 
-    for (let i = 0; i < userInfo.length; i++) {
-        listUser.push({
-            userid: userInfo[i]._id,
-            firstName: userInfo[i].firstName,
-            lastName: userInfo[i].lastName,
-            email: userInfo[i].email,
-            isValidate: userInfo[i].isValidate,
-            isAdmin: userInfo[i].isAdmin,
+        for (let i = 0; i < userInfo.length; i++) {
+            listUser.push({
+                userid: userInfo[i]._id,
+                firstName: userInfo[i].firstName,
+                lastName: userInfo[i].lastName,
+                email: userInfo[i].email,
+                isValidate: userInfo[i].isValidate,
+                isAdmin: userInfo[i].isAdmin,
+            });
+        }
+        res.json({
+            message: "RS-RedCross ListUser !",
+            data: listUser
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error",
         });
     }
 
-    res.status(200).json({
-        message: "RS-RedCross ListUser !",
-        data: listUser
-    });
+}
+
+// test avec plusieurs expériences et formation
+const getOneUser = async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        const userInfo = await Schema.User.find({ _id: userId });
+        const EducationInfo = await Schema.UserEducation.find({ userId: userId });
+        const ExperienceInfo = await Schema.UserExperience.find({ userId: userId });
+        const allInfoUser = [];
+
+        allInfoUser.push({
+            user: userInfo,
+            EducationInfo,
+            ExperienceInfo
+        });
+        res.json({
+            message: "UserInfo",
+            data: allInfoUser
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error: User not found",
+        });
+    }
+
 };
 
-const getOneUser = async (_req, res) => {
-    const userInfo = await Schema.User.find({ /* _id: req.param.userid */ });
-    const EducationInfo = await Schema.UserEducation.find({/* _id: req.param.userid */ });
-    const ExperienceInfo = await Schema.UserExperience.find({ /* _id: req.param.userid */ });
-    const allInfoUser = [];
-
-    allInfoUser.push({
-        user: userInfo,
-        EducationInfo,
-        ExperienceInfo
-    });
-
-    res.status(200).json({
-        message: "UserInfo",
-        data: allInfoUser
-    });
+const modifyOneUser = async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        const userUpdate = await Schema.User.updateOne(
+            { _id: userId },
+            { isValidate: true }
+        );
+        res.json({
+            message: "Update status: isValidate => true",
+        })
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error: User not found",
+        });
+    }
 };
 
-const modifyOneUser = async (_req, res) => {
-    // ici on met le code qui change le statut isValidate à true
-};
+const deleteOneUser = async (req, res) => {
 
-const deleteOneUser = async (_req, res) => {
-    //ici on met le code qui supprime un compte
+    try {
+        const userId = req.params.userid;
+        const userInfo = await Schema.User.deleteOne({ _id: userId });
+        const EducationInfo = await Schema.UserEducation.deleteMany({ userId: userId });
+        const ExperienceInfo = await Schema.UserExperience.deleteMany({ userId: userId });
+
+        res.json({
+            message: `${userId} deleted`,
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error: User not found",
+        });
+    }
+
 };
 
 module.exports = {
