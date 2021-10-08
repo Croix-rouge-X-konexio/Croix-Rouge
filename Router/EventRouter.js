@@ -5,9 +5,9 @@ const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
-router.get("/", Protect.protect, EventController.getAllEvent);
-router.post("/", Protect.protect, isAdmin.isAdmin, EventController.addEvent);
-router.delete("/:eventId", Protect.protect, isAdmin.isAdmin, EventController.deleteEvent);
-// router.patch("/", Protect.protect, isAdmin.isAdmin, EventController.patchEvent);
+router.get("/", Protect.protect, EventController.getAllEvent); // V
+router.post("/", Protect.protect, isAdmin.isAdmin, EventController.addEvent); // V
+router.delete("/:eventId", Protect.protect, isAdmin.isAdmin, EventController.deleteEvent); // X
+// router.patch("/", Protect.protect, isAdmin.isAdmin, EventController.patchEvent); // X
 
 module.exports = router;
