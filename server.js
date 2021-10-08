@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const Protect = require("./middleware/protect");
 const isAdmin = require("./middleware/isAdmin");
 const router = express.Router();
+const cors = require("cors");
 
 // ROUTER
 const EventRouter = require("./Router/EventRouter");
@@ -33,6 +34,7 @@ mongoose
 
 // MIDDLEWARE
 app.use(express.json());
+app.use(cors());
 app.use(cookieParser());
 
 app.use("/event", EventRouter);

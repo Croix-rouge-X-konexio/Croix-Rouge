@@ -45,6 +45,7 @@ const logIn = async (req, res) => {
 const addUser = async (req, res) => {
     const User = req.body
     const hashedPassword = await bcrypt.hash(User.password, 12);
+    console.log("Coté Back    ", User);
     const educationExist = await Schema.EducationList.findOne({
         education: User.education,
     });
