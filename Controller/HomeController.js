@@ -36,8 +36,10 @@ const logIn = async (req, res) => {
 
     const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET); //Creation du token
 
-    res.cookie("jwt", token, { httpOnly: true, secure: false }); //creation du cookie
-    res.json("You are connected");
+    res.cookie("jwt", token, { httpOnly: true, secure: false }); //Est ce que ç ava bien jusqu'au front ? Si oui comment vérifier
+    res.json({
+        message: "You are connected",
+    });
 };
 
 
@@ -78,7 +80,7 @@ const addUser = async (req, res) => {
         });
         res.status(201).json({
             message: `New user added ! ${User.email}`,
-            data: User
+            data: User // On renvoit le req.body sans traitement, est-ce que c'est utile ?
         });
     }
     catch (err) {
