@@ -20,7 +20,6 @@ const logIn = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const userExist = await Schema.User.findOne({ email }); //Chercher l'utilisateur dans la BD
-
     if (!userExist) {
         return res.json({
             message: "Invalid email or password",

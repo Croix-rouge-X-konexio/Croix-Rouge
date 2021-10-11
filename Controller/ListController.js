@@ -76,6 +76,7 @@ const getOneUser = async (req, res) => {
 const modifyOneUser = async (req, res) => {
     try {
         const userId = req.params.userid;
+        console.log("coté back ligne 79   ", userId);
         const userUpdate = await Schema.User.updateOne(
             { _id: userId },
             { isValidate: true }

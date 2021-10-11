@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
 function protect(req, res, next) {
-    // console.log(req.cookies.jwt)
+    console.log(req.cookies.jwt)
     try {
         const dataUser = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
         if (dataUser.iat + 1000 < Math.ceil(Date.now() / 1000)) {
