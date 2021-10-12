@@ -115,6 +115,10 @@ const EventsSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "Users", // à vérif
     }],
+    numberOfAttendies: {
+        required: true,
+        type: Number,
+    }
 });
 
 const EventEducationRelatedSchema = new mongoose.Schema({

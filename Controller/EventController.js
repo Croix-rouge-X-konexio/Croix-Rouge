@@ -49,7 +49,8 @@ const addEvent = async (req, res) => {
             duration: Event.duration,
             place: Event.place,
             description: Event.description,
-            userId: req.cookies.jwtData.id
+            userId: req.cookies.jwtData.id,
+            numberOfAttendies: 0
         });
         await Schema.EventEducationRelated.create({
             EventId: newEvent.id,
@@ -69,7 +70,6 @@ const addEvent = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
-
     try {
         const eventId = req.params.eventId;
         const Event = await Schema.Event.deleteOne({ _id: eventId });
@@ -86,10 +86,58 @@ const deleteEvent = async (req, res) => {
             message: "error: Event not found",
         });
     }
-
-
-
 };
+
+async function numberOfAttendees() {
+    try {
+        const arrayEvent = await Schema.Event.find({}); // On récupère tous les evenement 
+        const IdOfAllEvent = arrayEvent.map(element => element._id); // on crée un tableau avec la liste de tous les EventID
+        console.log(IdOfAllEvent.length)
+        for (let i = 0; i < IdOfAllEvent.length; i++) { // On boucle sur tous les éléments du tableau
+            const numberAttendies = await Schema.EventAttendees.countDocuments({ EventId: IdOfAllEvent[i] }); // on compte dans eventattendee le nombre de fois ou l'ID de l'event existe
+            console.log(numberAttendies); // on affiche le numbre de participant
+            console.log(IdOfAllEvent[i]);
+            const test = await Schema.Event.updateOne({ EventId: IdOfAllEvent[i] }, { numberOfAttendies: numberAttendies }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
+            console.log(test)
+        } // On boucle sur l'evenement suivant (présent dans la variable/tableau IdOfAllEvent 
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error",
+        });
+    }
+}
+
+
+
+const attendEvent = async (req, res) => {
+    const eventId = req.params.eventId;
+    const userId = req.cookies.jwtData.id;
+    try {
+        const attendToEvent = await Schema.EventAttendees.findOne({ EventId: eventId, userId: userId });
+        if (attendToEvent) {
+            await Schema.EventAttendees.deleteOne({ EventId: eventId });
+        } else {
+            const newEvent = await Schema.EventAttendees.create({
+                EventId: eventId,
+                userId: userId
+            });
+        };
+        numberOfAttendees();
+        res.json({
+            message: `Number of attendees up to date`,
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error",
+        });
+    }
+};
+
+
 
 /* const patchEvent = async (req, res) => { //////// A corriger et ajouter si on a du temps
     try {
@@ -131,4 +179,5 @@ module.exports = {
     addEvent: addEvent,
     deleteEvent: deleteEvent,
     // patchEvent: patchEvent,
+    attendEvent: attendEvent,
 };

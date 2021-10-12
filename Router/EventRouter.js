@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.get("/", Protect.protect, EventController.getAllEvent); // V
 router.post("/", Protect.protect, isAdmin.isAdmin, EventController.addEvent); // V
-router.delete("/:eventId", Protect.protect, isAdmin.isAdmin, EventController.deleteEvent); //  Récupérer coté front l'id de l'Event
+router.post("/interested/:eventId", Protect.protect, EventController.attendEvent); // X
+router.delete("/:eventId", Protect.protect, isAdmin.isAdmin, EventController.deleteEvent); //  V
 // router.patch("/", Protect.protect, isAdmin.isAdmin, EventController.patchEvent); // X
 
 module.exports = router;

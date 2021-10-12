@@ -33,6 +33,12 @@ const logIn = async (req, res) => {
         });
     }
 
+    if (userExist.isValidate === false) {
+        return res.json({
+            message: "Account waiting for validation", // test
+        });
+    }
+
     const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET); //Creation du token
 
     res.cookie("jwt", token, { httpOnly: true, secure: false }); //Est ce que ç ava bien jusqu'au front ? Si oui comment vérifier
@@ -46,7 +52,7 @@ const logIn = async (req, res) => {
 const addUser = async (req, res) => {
     const User = req.body
     const hashedPassword = await bcrypt.hash(User.password, 12);
-    console.log("Coté Back    ", User);
+    // console.log("Coté Back    ", User);
     const educationExist = await Schema.EducationList.findOne({
         education: User.education,
     });

@@ -20,7 +20,7 @@ const Schema = require("./Schema");
 
 // DOTENV CONFIG
 dotenv.config(
-    { path: "./congif.env" }
+    { path: "./config.env" }
 );
 
 // MONGOOSE CONNECT
