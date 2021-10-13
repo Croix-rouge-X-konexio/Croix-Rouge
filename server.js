@@ -14,6 +14,7 @@ const cors = require("cors");
 const EventRouter = require("./Router/EventRouter");
 const HomeRouter = require("./Router/HomeRouter");
 const ListRouter = require("./Router/ListRouter");
+const ProfilRouter = require("./Router/ProfilRouter");
 
 // SCHEMA
 const Schema = require("./Schema");
@@ -40,6 +41,7 @@ app.use(cookieParser());
 app.use("/event", EventRouter);
 app.use("/home", HomeRouter);
 app.use("/list", ListRouter);
+app.use("/profil", ProfilRouter);
 
 
 // LISTEN
