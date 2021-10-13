@@ -97,8 +97,9 @@ async function numberOfAttendees() {
             const numberAttendies = await Schema.EventAttendees.countDocuments({ EventId: IdOfAllEvent[i] }); // on compte dans eventattendee le nombre de fois ou l'ID de l'event existe
             console.log(numberAttendies); // on affiche le numbre de participant
             console.log(IdOfAllEvent[i]);
-            const test = await Schema.Event.updateOne({ EventId: IdOfAllEvent[i] }, { numberOfAttendies: numberAttendies }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
-            console.log(test)
+            // const test = await Schema.Event.updateOne({ EventId: IdOfAllEvent[i] }, { numberOfAttendies: numberAttendies }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
+            const test = await Schema.Event.updateOne({ _id: IdOfAllEvent[i] }, { $set: { numberOfAttendies: numberAttendies } }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
+            console.log(test);
         } // On boucle sur l'evenement suivant (présent dans la variable/tableau IdOfAllEvent 
     }
     catch (err) {
