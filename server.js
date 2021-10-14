@@ -2,13 +2,14 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const Protect = require("./middleware/protect");
-const isAdmin = require("./middleware/isAdmin");
-const router = express.Router();
 const cors = require("cors");
+const multer = require("multer");
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+// const Protect = require("./middleware/protect");
+// const isAdmin = require("./middleware/isAdmin");
+// const router = express.Router();
 
 // ROUTER
 const EventRouter = require("./Router/EventRouter");
@@ -37,6 +38,9 @@ mongoose
 app.use(express.json());
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cookieParser());
+app.use(express.static('public'))
+// app.use(express.urlencoded({ extended: true }));
+
 
 app.use("/event", EventRouter);
 app.use("/home", HomeRouter);
@@ -48,3 +52,5 @@ app.use("/profil", ProfilRouter);
 app.listen(process.env.PORT, () => {
     console.log("Server listening on port: " + process.env.PORT);
 });
+
+//

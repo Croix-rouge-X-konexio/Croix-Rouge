@@ -1,9 +1,9 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const Schema = require("../Schema")
 const cookieParser = require("cookie-parser");
-const router = express.Router();
+// const router = express.Router();
+// const app = express();
 
 
 const getMyProfil = async (req, res) => {

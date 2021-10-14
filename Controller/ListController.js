@@ -1,12 +1,13 @@
 const express = require("express");
-const app = express();
-const dotenv = require("dotenv");
+// const app = express();
+// const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const Schema = require("../Schema")
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const router = express.Router();
+const fs = require("fs");
+// const router = express.Router();
 
 
 //  PAGE List //
@@ -76,7 +77,7 @@ const getOneUser = async (req, res) => {
 const modifyOneUser = async (req, res) => {
     try {
         const userId = req.params.userid;
-        console.log("coté back ligne 79   ", userId);
+        // console.log("coté back ligne 79   ", userId);
         const userUpdate = await Schema.User.updateOne(
             { _id: userId },
             { isValidate: true }
@@ -94,13 +95,13 @@ const modifyOneUser = async (req, res) => {
 };
 
 const deleteOneUser = async (req, res) => {
-
     try {
         const userId = req.params.userid;
         const userInfo = await Schema.User.deleteOne({ _id: userId });
         const EducationInfo = await Schema.UserEducation.deleteMany({ userId: userId });
         const ExperienceInfo = await Schema.UserExperience.deleteMany({ userId: userId });
-
+        fs.unlinkSync(`./public/Img/${userId}`)
+        // fs.unlink(`./public/Img${userId}`)
         res.json({
             message: `${userId} deleted`,
         });

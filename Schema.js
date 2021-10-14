@@ -30,10 +30,10 @@ const UsersSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
-    // picture: {
-    //     required: false,
-    //     type: File
-    // },
+    picture: {
+        required: false,
+        type: String
+    },
     isAdmin: {
         required: true,
         type: Boolean,
@@ -73,12 +73,12 @@ const UsersEducationSchema = new mongoose.Schema({
         type: Number,
     },
     // certificate: {
-    //     required: true,
-    //     type: fichier
+    //     type: String,
+    //     required: true
     // },
     userId: [{
         type: mongoose.Types.ObjectId,
-        ref: "Users", // à vérif
+        ref: "Users",
     }],
 });
 
@@ -103,10 +103,10 @@ const EventsSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
-    // picture: {
-    //     required: true,
-    //     type: File
-    // },
+    picture: {
+        type: String,
+        required: true
+    },
     description: {
         required: true,
         type: String,

@@ -1,10 +1,10 @@
 const express = require("express");
 const app = express();
-const dotenv = require("dotenv");
+// const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+// const cookieParser = require("cookie-parser");
 
 const Schema = require("../Schema");
 

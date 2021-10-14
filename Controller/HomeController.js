@@ -7,14 +7,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const router = express.Router();
 const Schema = require("../Schema");
-
+const fs = require("fs");
+const path = require("path");
 
 // PAGE HOME //
-
-// SE CONNECTER - OK
-// S'INSCRIRE - OK
 // MODIFIER SON PROFIL - A faire
-// SE DECONNECTER - OK
 
 const logIn = async (req, res) => {
     const email = req.body.email;
@@ -48,15 +45,15 @@ const logIn = async (req, res) => {
 };
 
 
-
+// remplir l'EducationList
 const addUser = async (req, res) => {
     const User = req.body
+    console.log("Coté Back    ", User);
+    console.log("console log de file ", req.file);
     const hashedPassword = await bcrypt.hash(User.password, 12);
-    // console.log("Coté Back    ", User);
     const educationExist = await Schema.EducationList.findOne({
         education: User.education,
     });
-    // remplir l'EducationList
     try {
         const newUser = await Schema.User.create({
             firstName: User.firstName,
@@ -68,9 +65,12 @@ const addUser = async (req, res) => {
             password: hashedPassword,
             isAdmin: false,
             isValidate: false,
-            // picture
+            picture: req.file.originalname
         });
-        // console.log(newUser.id);
+
+        fs.renameSync(req.file.path, path.join(req.file.destination, newUser.id));
+        await Schema.User.updateOne({ _id: newUser.id }, { picture: newUser.id });
+
         await Schema.UserEducation.create({
             date: User.date,
             userId: newUser.id,
@@ -97,9 +97,17 @@ const addUser = async (req, res) => {
 };
 
 const deconnected = (_req, res) => {
-    res.clearCookie("jwt", "", { path: "/dsiconnect" })
-        .status(200)
-        .json({ message: "Offline" });
+    try {
+        res.clearCookie("jwt", "", { path: "/dsiconnect" })
+            .status(200)
+            .json({ message: "Offline" });
+    }
+    catch (err) {
+        console.log(err);
+        return res.json({
+            message: "error",
+        });
+    }
 };
 
 // const patchUser = (Protect.protect, (req, res) => {

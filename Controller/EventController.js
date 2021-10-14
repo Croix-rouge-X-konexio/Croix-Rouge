@@ -1,14 +1,16 @@
 const express = require("express");
 const app = express();
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const Protect = require("../middleware/protect");
-const isAdmin = require("../middleware/isAdmin");
-const router = express.Router();
+const fs = require("fs");
+const path = require("path");
 const Schema = require("../Schema");
+// const Protect = require("../middleware/protect");
+// const isAdmin = require("../middleware/isAdmin");
+// const router = express.Router();
+// const dotenv = require("dotenv");
 
 
 //  PAGE EVENT //
@@ -40,8 +42,8 @@ const getAllEvent = async (_req, res) => {
 
 const addEvent = async (req, res) => {
     const Event = req.body;
-    // console.log(req.cookies.jwtData.id);
     try {
+
         const newEvent = await Schema.Event.create({
             title: Event.title,
             date: Event.date,
@@ -50,8 +52,13 @@ const addEvent = async (req, res) => {
             place: Event.place,
             description: Event.description,
             userId: req.cookies.jwtData.id,
+            picture: req.file.originalname,
             numberOfAttendies: 0
         });
+
+        fs.renameSync(req.file.path, path.join(req.file.destination, newEvent.id));
+        await Schema.Event.updateOne({ _id: newEvent.id }, { picture: newEvent.id });
+
         await Schema.EventEducationRelated.create({
             EventId: newEvent.id,
             EducationId: Event.educationId
@@ -75,7 +82,7 @@ const deleteEvent = async (req, res) => {
         const Event = await Schema.Event.deleteOne({ _id: eventId });
         const EventAttendees = await Schema.EventAttendees.deleteMany({ EventId: eventId });
         const EventEducationRelated = await Schema.EventEducationRelated.deleteMany({ EventId: eventId });
-
+        fs.unlinkSync(`./public/Img/${eventId}`)
         res.json({
             message: `${eventId} deleted`,
         });
@@ -92,14 +99,14 @@ async function numberOfAttendees() {
     try {
         const arrayEvent = await Schema.Event.find({}); // On récupère tous les evenement 
         const IdOfAllEvent = arrayEvent.map(element => element._id); // on crée un tableau avec la liste de tous les EventID
-        console.log(IdOfAllEvent.length)
+        // console.log(IdOfAllEvent.length)
         for (let i = 0; i < IdOfAllEvent.length; i++) { // On boucle sur tous les éléments du tableau
             const numberAttendies = await Schema.EventAttendees.countDocuments({ EventId: IdOfAllEvent[i] }); // on compte dans eventattendee le nombre de fois ou l'ID de l'event existe
-            console.log(numberAttendies); // on affiche le numbre de participant
-            console.log(IdOfAllEvent[i]);
+            // console.log(numberAttendies); // on affiche le numbre de participant
+            // console.log(IdOfAllEvent[i]);
             // const test = await Schema.Event.updateOne({ EventId: IdOfAllEvent[i] }, { numberOfAttendies: numberAttendies }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
             const test = await Schema.Event.updateOne({ _id: IdOfAllEvent[i] }, { $set: { numberOfAttendies: numberAttendies } }); // Regardé le updateOne //On met à jours la valeur du numberAttendies avec ce qu'on à récupérer ligne précédente
-            console.log(test);
+            // console.log(test);
         } // On boucle sur l'evenement suivant (présent dans la variable/tableau IdOfAllEvent 
     }
     catch (err) {
