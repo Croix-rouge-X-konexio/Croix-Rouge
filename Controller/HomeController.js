@@ -13,6 +13,29 @@ const path = require("path");
 // PAGE HOME //
 // MODIFIER SON PROFIL - A faire
 
+const checkLogIn = async (req, res) => {
+    try {
+        console.log("ON RECOIT REQUETE !!!!!!")
+        const dataUser = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
+        console.log(dataUser)
+        if (dataUser.iat + 1000 > Math.ceil(Date.now() / 1000)) {
+            return res.json({
+                logStatus: true
+            })
+        } else {
+            return res.json({
+                logStatus: false
+            })
+        }
+    } catch (err) {
+        console.log("Catch", err);
+        return res.json({
+            logStatus: false
+        })
+    }
+}
+
+
 const logIn = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -119,4 +142,5 @@ module.exports = {
     addUser: addUser,
     // patchUser: patchUser,
     deconnected: deconnected,
+    checkLogIn: checkLogIn,
 };

@@ -7,6 +7,7 @@ const upload = multer({ dest: './public/Img/' });
 
 router.post("/register", upload.single('image'), HomeController.addUser); // V
 router.post("/logIn", HomeController.logIn); // V
+router.get("/logIn", HomeController.checkLogIn); // V
 router.get("/", Protect.protect, HomeController.deconnected); // V
 // router.patch("/", HomeController.patchUser); // X si on a le temps et que tout est nickel
 
